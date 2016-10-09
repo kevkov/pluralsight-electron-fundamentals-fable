@@ -1,3 +1,7 @@
+.vscode
+app/js
+temp
+
 # Logs
 logs
 *.log

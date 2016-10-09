@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "name": "fsotobombth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron app/js/main.js",
+    "build": "fable",
+    "watch": "fable -w --target watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fable-core": "^0.6.8"
+  },
+  "devDependencies": {
+    "devtron": "^1.4.0",
+    "electron": "^1.4.3",
+    "fable-import-electron": "0.0.6",
+    "source-map-loader": "^0.1.5",
+    "webpack": "^1.13.2"
+  }
+}
