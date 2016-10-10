@@ -1,12 +1,11 @@
 #r "../node_modules/fable-core/Fable.Core.dll"
 #load "../node_modules/fable-import-electron/Fable.Import.Electron.fs"
-#load "./Fable.Import.Seriously.fs"
+#load "./Fable.Import.Seriously.fsx"
 #load "./countdown.fsx"
 #load "./video.fsx"
 #load "./flash.fsx"
 
 open Fable.Import.Seriously
-open Fable.Import.Seriously_Extensions
 open Fable.Core
 open Fable.Core.JsInterop
 open Fable.Import.Browser
@@ -42,18 +41,21 @@ window.addEventListener("DOMContentLoaded", unbox (fun e ->
     let counterEl = document.getElementById("counter")
     let canvasEl = document.getElementById("canvas") :?> HTMLCanvasElement
     let flashEl = document.getElementById("flash")
-    let seriously = createNew Seriously () 
+
+    let seriously = Globals.Seriously.Create () 
+    let videoSrc = seriously.source "#video"
+    let canvasTarget = seriously.target "#canvas"
+
+    canvasTarget.source <- videoSrc
+    seriously.go ()
     
-    let ctx = canvasEl.getContext_2d ()
-    // let videoSrc = seriously.source "#video"
-    // let canvasTarget = seriously.target "#canvas"
     initVideo navigator videoEl
 
     recordEl.addEventListener_click(System.Func<_,_>(fun evt ->
         countdown counterEl 3  (fun _ ->
             flash flashEl
-            // let bytes = captureBytesFromLiveCanvas(canvasEl :?> HTMLCanvasElement)
-            let bytes = captureBytes (U3.Case3 videoEl) ctx canvasEl
+            let bytes = captureBytesFromLiveCanvas(canvasEl)
+            //let bytes = captureBytes (U3.Case3 videoEl) ctx canvasEl
             electron.ipcRenderer.send("image-captured", bytes)
             photosEl.appendChild(formatImgTag document bytes) |> ignore
         )
@@ -62,8 +64,6 @@ window.addEventListener("DOMContentLoaded", unbox (fun e ->
 
     photosEl.addEventListener_click(System.Func<_,_>(fun evt ->
         let isRm = (evt.target :?> Element).classList.contains("photoClose")
-        printfn "%A" evt.target
-        printfn "%A" (evt.target :?> Element).classList
         let selector = if isRm then ".photoClose" else ".photoImg"
 
         let photos = document.querySelectorAll(selector)
@@ -73,8 +73,6 @@ window.addEventListener("DOMContentLoaded", unbox (fun e ->
                 electron.ipcRenderer.send("image-remove", index)
             else
                 let rmain = electron.remote.require "./main"
-                printfn "%s" (rmain.ToString())
-                printfn "path is %s" (string(rmain?getImageFromCache$(index)))
                 electron.shell.showItemInFolder (string (rmain?getImageFromCache(index)))
         obj()        
     ))
