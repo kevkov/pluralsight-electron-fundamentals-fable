@@ -4,6 +4,7 @@
 #load "./countdown.fsx"
 #load "./video.fsx"
 #load "./flash.fsx"
+#load "./effects.fsx"
 
 open Fable.Import.Seriously
 open Fable.Core
@@ -15,6 +16,7 @@ open Fable.Import.Node
 open Video
 open Countdown
 open Flash
+open Effects
 
 let findIndex predicate (nodelist: NodeListOf<'a>) =
     seq { for a in 0 .. int nodelist.length do
@@ -33,7 +35,6 @@ let formatImgTag (doc:Document) (bytes:string) =
     div.appendChild(close) |> ignore
     div
 
-
 window.addEventListener("DOMContentLoaded", unbox (fun e ->
     let videoEl = document.getElementById("video") :?> HTMLVideoElement
     let recordEl = document.getElementById("record")
@@ -46,8 +47,7 @@ window.addEventListener("DOMContentLoaded", unbox (fun e ->
     let videoSrc = seriously.source "#video"
     let canvasTarget = seriously.target "#canvas"
 
-    canvasTarget.source <- videoSrc
-    seriously.go ()
+    chooseEffect seriously videoSrc canvasTarget "vanilla"
     
     initVideo navigator videoEl
 
@@ -74,7 +74,11 @@ window.addEventListener("DOMContentLoaded", unbox (fun e ->
             else
                 let rmain = electron.remote.require "./main"
                 electron.shell.showItemInFolder (string (rmain?getImageFromCache(index)))
-        obj()        
+        null        
+    ))
+
+    electron.ipcRenderer.on("effect-choose", (fun (evt:IpcRendererEvent) effectName ->
+        chooseEffect seriously videoSrc canvasTarget (string effectName)
     ))
 ))
 
@@ -83,3 +87,4 @@ electron.ipcRenderer.on("image-removed", (fun (evt:IpcRendererEvent) index ->
     let allphotos = document.querySelectorAll(".photo")
     container.removeChild(allphotos.Item(int (string index))) |> ignore
 ))
+

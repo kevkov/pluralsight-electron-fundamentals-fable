@@ -1,12 +1,14 @@
 #r "../node_modules/fable-core/Fable.Core.dll"
 #load "../node_modules/fable-import-electron/Fable.Import.Electron.fs"
 #load "./images.fsx"
+#load "./menu.fsx"
 
 open Fable.Core
 open Fable.Core.JsInterop
 open Fable.Import
 open Fable.Import.Electron
 open Images
+open Menu
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -50,7 +52,11 @@ let getImageFromCache (index:int) =
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-electron.app.on("ready", unbox createMainWindow)
+electron.app.on("ready", unbox (fun _ ->
+     createMainWindow ()
+     let menuContents = electron.Menu.buildFromTemplate(menuTemplate mainWindow.Value)
+     electron.Menu.setApplicationMenu(menuContents)
+))
 
 // Quit when all windows are closed.
 electron.app.on("window-all-closed", unbox(fun () ->
