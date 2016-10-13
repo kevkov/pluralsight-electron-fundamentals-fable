@@ -36,10 +36,8 @@ let getPicturesDir (app: App) =
 let mkdir path = 
     fs.stat(path, System.Func<_,_,_>(fun err stats ->
         if (not (isNull err) && err.code <> Some "ENOENT") then
-            printfn "log error"
             logError(err.ToString())
         elif (not (isNull err) || not (stats.isDirectory())) then
-            printfn "mkdir"
             fs.mkdir(path)
         else
             printfn "mkdir error: %A" err
@@ -47,12 +45,9 @@ let mkdir path =
     ))
 
 let cache (imgPath: string) = 
-    printfn "caching %A" imgPath
     imageCache.Insert(0, imgPath)
-    printfn "cached %A" imageCache
 
 let getFromCache (index:int) =
-    printfn "getting %A" index
     imageCache.[index]
 
 let rm index donefn =
@@ -60,8 +55,6 @@ let rm index donefn =
         match err with
         | null ->
             imageCache.RemoveAt(index)
-            printfn "rm %d" index
-            printfn "rmed %A" imageCache
             donefn()
         | _ -> logError(err.ToString())
     ))

@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fable-core": "^0.6.8"
+    "fable-core": "^0.6.9"
   },
   "devDependencies": {
     "devtron": "^1.4.0",

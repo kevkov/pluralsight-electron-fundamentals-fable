@@ -79,7 +79,14 @@ window.addEventListener("DOMContentLoaded", unbox (fun e ->
 
     electron.ipcRenderer.on("effect-choose", (fun (evt:IpcRendererEvent) effectName ->
         chooseEffect seriously videoSrc canvasTarget (string effectName)
+        
+    )) |> ignore
+
+    electron.ipcRenderer.on("effect-cycle", (fun (evt:IpcRendererEvent) data ->
+        //cycleEffects seriously videoSrc canvasTarget
+        ()
     ))
+
 ))
 
 electron.ipcRenderer.on("image-removed", (fun (evt:IpcRendererEvent) index ->
