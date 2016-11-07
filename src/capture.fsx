@@ -54,16 +54,16 @@ window.addEventListener("DOMContentLoaded", unbox (fun e ->
     recordEl.addEventListener_click(System.Func<_,_>(fun evt ->
         countdown counterEl 3  (fun _ ->
             flash flashEl
-            let bytes = captureBytesFromLiveCanvas(canvasEl)
+            let bytes = captureBytesFromLiveCanvas canvasEl
             //let bytes = captureBytes (U3.Case3 videoEl) ctx canvasEl
             electron.ipcRenderer.send("image-captured", bytes)
             photosEl.appendChild(formatImgTag document bytes) |> ignore
         )
-        obj()
+        null
     ) )
 
     photosEl.addEventListener_click(System.Func<_,_>(fun evt ->
-        let isRm = (evt.target :?> Element).classList.contains("photoClose")
+        let isRm = (evt.target :?> Element).classList.contains "photoClose"
         let selector = if isRm then ".photoClose" else ".photoImg"
 
         let photos = document.querySelectorAll(selector)
@@ -73,7 +73,7 @@ window.addEventListener("DOMContentLoaded", unbox (fun e ->
                 electron.ipcRenderer.send("image-remove", index)
             else
                 let rmain = electron.remote.require "./main"
-                electron.shell.showItemInFolder (string (rmain?getImageFromCache(index)))
+                electron.shell.showItemInFolder (string (rmain?getImageFromCache index))
         null        
     ))
 

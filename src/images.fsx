@@ -41,7 +41,7 @@ let mkdir path =
             fs.mkdir(path)
         else
             printfn "mkdir error: %A" err
-        obj()
+        null
     ))
 
 let cache (imgPath: string) = 
